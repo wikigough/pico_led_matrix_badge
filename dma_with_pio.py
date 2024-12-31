@@ -145,7 +145,7 @@ def transfer_data(input_list, buf, test=False):
             enable=True,
             high_pri=False,
             size=2,
-            inc_read=False,   # original = True
+            inc_read=True,   # original = True
             inc_write=False,  # original = True
             ring_size=0,
             ring_sel=False,
