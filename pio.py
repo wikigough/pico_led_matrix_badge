@@ -100,13 +100,13 @@ def shift_reg():
     label("bcd_count_on")  
     jmp(x_dec, "bcd_count_on")
     
-    out(y, 12)                           # now get brightness control OFF count into y.
+    out(x, 12)                           # now get brightness control OFF count into x.
     set(pins, 8)                         # set blank high and latch low during this off period of dimming. (8 = 0b1000)
     
     label("bcd_count_off")
-    jmp(y_dec, "bcd_count_off")
-
-    irq(rel(0)) 
+    jmp(x_dec, "bcd_count_off")
+    
+    #irq(rel(0)) # irq provided by dma.
     
     wrap()
 
