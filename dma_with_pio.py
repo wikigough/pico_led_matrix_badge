@@ -1,7 +1,7 @@
-#   Sending LED Matrix data over DMA chain.
-#   Uses example from the documentation as a basis for DMA chaining:
-#       https://docs.micropython.org/en/latest/library/rp2.DMA.html
-#   Uses the pio from here (changed to pythonic version and slightly modified):
+#	Sending LED Matrix data over DMA chain.
+#	Uses example from the documentation as a basis for DMA chaining:
+# 		https://docs.micropython.org/en/latest/library/rp2.DMA.html
+# 	Uses the pio from here (changed to pythonic version and slightly modified):
 #       https://github.com/pimoroni/pimoroni-pico/blob/main/libraries/pico_unicorn/pico_unicorn.pio
 
 
@@ -70,6 +70,7 @@ def transfer_data(input_list, buf, test=False):
     gather_list.append(0)
     gather_list.append(0)
     print(gather_list)  # --> this is just to check that the gather_list has been indeed populated
+    gather_list_addr = addressof(gather_list)
     print("Gather list address start = ", addressof(gather_list)) # --> this is to check against the DMA registers
     print("Buffer address start = ", addressof(buf)) # --> this is to check against the DMA registers
     #----------------------------------------------------------------------------------------------------#
@@ -93,20 +94,20 @@ def transfer_data(input_list, buf, test=False):
         chain_to=buffer_dma.channel
     )
     
+    buffer_dma_write_addr = addressof(buffer_dma.registers) + 14 * 4
+    
     def trigger_gather_dma(sm0):
         """
             used by State Machine 0 when the full input_data transfer has been completed.
             NOT TESTED
 
         """
-        print("gather_dma trig")
-        gather_dma.config(
-            read=addressof(gather_addr), 
-            write=buffer_dma.registers[14:16],
-            count=2, 
-            ctrl=gather_ctrl, 
-            trigger=True
-        )
+        try:
+            print("gather_dma trig")
+            gather_dma.config(read=gather_list_addr, write=buffer_dma_write_addr, trigger=True)
+        except Exception as e:
+            print(f"Exception caught in IRQ handler: {e}")
+            pass
     
     
     gather_dma.config(
@@ -149,11 +150,11 @@ def transfer_data(input_list, buf, test=False):
             inc_write=False,  # original = True
             ring_size=0,
             ring_sel=False,
-            treq_sel=4,       # original = 63
+            treq_sel=0,       # original = 63
             irq_quiet=True,
             bswap=False,
             sniff_en=False,
-            chain_to=buffer_dma.channel
+            chain_to=gather_dma.channel
         )
         
         
@@ -193,7 +194,9 @@ def transfer_data(input_list, buf, test=False):
         print("Gather DMA read: ", gather_dma.read)
         print("Buffer DMA read: ", buffer_dma.read, ", buffer DMA write: ", buffer_dma.write, ", buffer DMA count: ",buffer_dma.count )
         print(gather_dma.active(), buffer_dma.active())
-        time.sleep(2)
+        print(f"PIO TX FIFO level: {mem32[TXF0_addr]}")  # Check FIFO level.
+        print(addressof(buffer_dma.registers))
+        time.sleep(1)
        
     
     print("Done.") # this is only used for the test.
@@ -231,7 +234,9 @@ print(output)
 while True:
     for item in output:
         sm0.put(item)
-
+        a = mem32[TXF0_addr]
+        #print(f"PIO TX FIFO level: {a}")
+        time.sleep(0.1)
 
 
 
