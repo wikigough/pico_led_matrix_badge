@@ -29,14 +29,22 @@ This repo has the following files:
  Commenting has been employed within the python scripts for additional clarity.
  
  ### Diagrams
- Graphical diagrams have been provided within this repo to aid understanding of how the two files work. 
+ Graphical diagrams have been provided within this repo to aid understanding of how the two files work. These are drawn in draw.io, so this program needs to
+ be installed before opening the diagrams.
+ 
+ <img src="https://github.com/wikigough/pico_led_matrix_badge/blob/main/diagrams/dma_with_pio_no_interrupt.png" alt=""> 
+ 
+ <img src="https://github.com/wikigough/pico_led_matrix_badge/blob/main/diagrams/dma_animation.png" alt=""> 
+ 
  
  ## Usage
  ### Running
  This script was only tested using Thonny. The files were manually uploaded onto the RPico W using the Thonny IDE, then the scripts were run from the Thonny 
  IDE by clicking on the green play button in the IDE.
  
- Once running, the LED matrix should show a "HI" in alternating red and blue every second.
+ Once running, the LED matrix should show a "HI" in alternating red and blue every second for the dma_with_pio_no_interrupt.py.
+
+ For dma_animation.py, there will be nothing shown on the LED Matrix, only text displaying when various interrupts have been triggered and the output buffer.
  
  ### Exiting scripts
  The dmas and state machines remain on in the background unless the DMAs and State Machines are safely exited.
