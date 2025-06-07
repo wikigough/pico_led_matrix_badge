@@ -11,6 +11,8 @@ This repo has the following files:
     - tested script which uses 4 DMAs to update a fixed image continuously, and triggers a change in the displayed image every second using the main CPU. 
     - the script therefore runs the matrix image update in the background, but is not able to run an animation in the background (i.e. updating where the 
       gather DMA reads from).
+- dma_pio_timer.py:
+    - same as dma_with_pio_no_interrupt.py, but with a timer triggering a change in display, rather than using time.sleep(). 
 - dma_animation.py:
      - a demonstration of using a PIO module as a 1Hz trigger so that the animation update can be run in the background.
      - NOTE: use of two PIO modules (the state machine that updates the matrix and the 1Hz trigger), caused issues with the Pico W, as I think the WiFi module
